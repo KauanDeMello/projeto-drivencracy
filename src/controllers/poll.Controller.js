@@ -42,3 +42,47 @@ export async function getPoll(req, res) {
     return res.status(500).json({ error: "Erro ao buscar enquetes" });
   }
 }
+
+
+export async function getPollResult(req, res) {
+  const pollId = req.params.id;
+
+  try {
+    const poll = await db.collection("polls").findOne({
+      _id: new ObjectId(pollId),
+    });
+    if (!poll) {
+      return res.status(404).json({ error: "Enquete não encontrada" });
+    }
+
+    const currentDate = new Date();
+    const expireAt = new Date(poll.expireAt);
+    if (currentDate <= expireAt) {
+      return res.status(403).json({ error: "Enquete ainda não expirada" });
+    }
+
+    let mostVotedChoice = null;
+    let maxVotes = -1;
+
+    poll.choices.forEach((choice) => {
+      if (choice.votes > maxVotes) {
+        maxVotes = choice.votes;
+        mostVotedChoice = choice;
+      }
+    });
+
+    const result = {
+      title: mostVotedChoice.title,
+      votes: mostVotedChoice.votes,
+    };
+
+    return res.status(200).json({
+      _id: poll._id,
+      title: poll.title,
+      expireAt: poll.expireAt,
+      result,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}

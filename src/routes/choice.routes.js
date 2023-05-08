@@ -8,6 +8,8 @@ const choiceRouter = Router()
 
 
 choiceRouter.post("/choice", createChoice)
+choiceRouter.post("/choice", createChoice)
+
 
 
 

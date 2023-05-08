@@ -79,3 +79,47 @@ export async function createChoice(req, res) {
       return res.status(500).json({ error: error.message });
     }
   }
+
+  export async function registerVote(req, res) {
+    const { pollId, choiceId } = req.params;
+  
+    try {
+      // Verifica se a enquete existe
+      const poll = await db.collection("polls").findOne({
+        _id: new ObjectId(pollId),
+      });
+      if (!poll) {
+        return res.status(404).json({ error: "Enquete não encontrada" });
+      }
+  
+      // Verifica se a enquete já expirou
+      const currentDate = new Date();
+      const expireAt = new Date(poll.expireAt);
+      if (currentDate > expireAt) {
+        return res.status(403).json({ error: "Enquete expirada" });
+      }
+  
+      // Busca a opção de voto selecionada na enquete
+      const choice = poll.choices.find((choice) => choice.id === choiceId);
+      if (!choice) {
+        return res.status(404).json({ error: "Opção de voto não encontrada" });
+      }
+  
+      // Incrementa o contador de votos da opção selecionada
+      choice.votes++;
+  
+      // Atualiza a enquete no banco de dados
+      const updateResult = await db.collection("polls").updateOne(
+        { _id: new ObjectId(pollId), "choices.id": choiceId },
+        { $set: { "choices.$.votes": choice.votes } }
+      );
+  
+      if (updateResult.modifiedCount !== 1) {
+        throw new Error("Não foi possível registrar o voto");
+      }
+  
+      return res.status(201).json({ message: "Voto registrado com sucesso" });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
