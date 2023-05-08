@@ -1,12 +1,12 @@
 import { Router } from "express";
+import { createPoll } from "../controllers/poll.Controller.js";
+
+
 
 const pollRouter = Router()
 
 
-pollRouter.post("/polls")
-pollRouter.get("/polls")
-pollRouter.delete("/polls/id:")
-pollRouter.put("/polls/id:")
-pollRouter.patch("/polls/id:")
+pollRouter.post("/polls", createPoll)
+
 
 export default pollRouter
