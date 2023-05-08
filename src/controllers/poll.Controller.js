@@ -25,15 +25,15 @@ export async function createPoll(req, res) {
       return res.status(422).json({ error: error.message });
     }
 
-   
+    // Retorna a enquete criada com status 201
     return res.status(201).json("Sucesso");
   } catch (error) {
-    
+    // Em caso de erro, retorna o status 500
     return res.status(500).json({ error: error.message });
   }
 }
 
-export async function getPolls(req, res) {
+export async function getPoll(req, res) {
   try {
     const polls = await db.collection("polls").find().toArray();
     return res.status(200).json(polls);
