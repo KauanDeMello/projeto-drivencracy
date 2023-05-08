@@ -34,3 +34,12 @@ export async function createPoll(req, res) {
   }
 }
 
+export async function getPolls(req, res) {
+    try {
+      const polls = await db.collection("DrivenCracia").find().toArray();
+      return res.status(200).json(polls);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Erro ao buscar enquetes" });
+    }
+  }
