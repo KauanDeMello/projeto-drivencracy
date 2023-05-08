@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createChoice, getPollChoices } from "../controllers/choice.Controller.js";
+import { createChoice } from "../controllers/choice.Controller.js";
 
 
 
@@ -7,7 +7,6 @@ import { createChoice, getPollChoices } from "../controllers/choice.Controller.j
 const choiceRouter = Router()
 
 
-choiceRouter.post("/choice", createChoice)
 choiceRouter.post("/choice", createChoice)
 
 
